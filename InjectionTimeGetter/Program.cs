@@ -22,7 +22,6 @@ namespace InjectionTimeGetter
                 Console.WriteLine("Completed file {0} of {1}", j, files.Length);
                 j++; 
             }
-
         }
 
         static string[] CreateOutputFileNames(string[] files, string finalExtension)
@@ -49,6 +48,7 @@ namespace InjectionTimeGetter
         static string WriteDataToString(double?[] ms1Inj, double[] ms1rt)
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Ms1 Retention Time" + "\t" + "Ms1 Injection Time"); 
             for (int i = 0; i < ms1Inj.Length; i++)
             {
                 sb.AppendLine(string.Join("\t", ms1rt[i], ms1Inj[i])); 
