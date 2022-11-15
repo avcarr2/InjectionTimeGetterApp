@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "InjectionTimeGetter": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\austi\\Source\\Repos\\mzLib\\mzLib\\Test\\DataFiles\""
+    }
+  }
+}
