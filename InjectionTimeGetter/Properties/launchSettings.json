@@ -2,7 +2,7 @@
   "profiles": {
     "InjectionTimeGetter": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\austi\\Source\\Repos\\mzLib\\mzLib\\Test\\DataFiles\""
+      "commandLineArgs": "\"C:\\Users\\austi\\Source\\Repos\\mzLib\\mzLib\\Test\\DataFiles\" \"2\""
     }
   }
 }
