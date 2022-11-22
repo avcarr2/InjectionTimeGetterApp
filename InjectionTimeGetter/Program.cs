@@ -19,23 +19,31 @@ namespace InjectionTimeGetter
             string[] files = Directory.GetFiles(args[0], "*.raw", SearchOption.AllDirectories);
             string[] fileNamesLite = files.Select(Path.GetFileNameWithoutExtension).ToArray(); 
             List<double[]> injectionTimes = new();
-            ConcurrentBag<double[]> injectionTimesBag = new(); 
+            List<IEnumerable<double>> injectionTimesBag = new(); 
             int msOrder = Convert.ToInt32(args[1]);
+            
+            int fileNumber = 1; 
+            Stopwatch sw = new Stopwatch();
             foreach (string file in files)
             {
+                Console.WriteLine("Processing file {0} of {1}", fileNumber, files.Length);
+                sw.Restart(); 
                 List<MsDataScan> scansList = LoadFile(file);
-                ProcessFile(scansList, msOrder, out double[] ms1Inj);
+                ProcessFile(scansList, msOrder, out IEnumerable<double> ms1Inj);
                 injectionTimesBag.Add(ms1Inj);
+                sw.Stop(); 
+                Console.WriteLine("Processed file in {0} ms", sw.ElapsedMilliseconds);
+                fileNumber++; 
             }
             string output = CreateOutput(injectionTimesBag.ToList(), fileNamesLite);
-            File.WriteAllTextAsync(Path.Combine(args[0], "InjectionTimes.txt"), output);
+            File.WriteAllText(Path.Combine(args[0], "InjectionTimes.txt"), output);
         }
 
-        static string CreateOutput(List<double[]> dataList, string[] files)
+        static string CreateOutput(List<IEnumerable<double>> dataList, string[] files)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(string.Join("\t", files)); 
-            int maxLength = dataList.Select(k => k.Length).Max();
+            int maxLength = dataList.Select(k => k.Count()).Max();
 
             for (int i = 0; i < maxLength - 1; i++)
             {
@@ -62,12 +70,16 @@ namespace InjectionTimeGetter
         }
         static List<MsDataScan> LoadFile(string filePath)
         {
-            return ThermoRawFileReader.LoadAllStaticData(filePath)
+            return ThermoRawFileReader.LoadAllStaticData(filePath,null,8)
                 .GetAllScansList();
         }
-        static void ProcessFile(List<MsDataScan> scansList, int msOrder, out double[] ms1Inj)
+        static void ProcessFile(List<MsDataScan> scansList, int msOrder, out IEnumerable<double> ms1Inj)
         {
             ms1Inj = GetInjectionTimesMs1(scansList, msOrder);
+        }
+        static IEnumerable<double> ProcessFile(List<MsDataScan> scansList, int msOrder)
+        {
+            return GetInjectionTimesMs1(scansList, msOrder);
         }
 
         static string WriteDataToString(double?[] ms1Inj, double[] ms1rt)
@@ -80,10 +92,11 @@ namespace InjectionTimeGetter
             }
             return sb.ToString(); 
         }
-        static double[] GetInjectionTimesMs1(List<MsDataScan> scan, int msOrder)
+        static IEnumerable<double> GetInjectionTimesMs1(List<MsDataScan> scan, int msOrder)
         {
-            return scan.Where(i => i.MsnOrder == msOrder)
-                .Select(i => i.InjectionTime.Value).ToArray(); 
+            return scan.AsParallel()
+                .Where(i => i.MsnOrder == msOrder)
+                .Select(i => i.InjectionTime.Value); 
         }
 
         static double[] GetMs1Rt(List<MsDataScan> scan)
