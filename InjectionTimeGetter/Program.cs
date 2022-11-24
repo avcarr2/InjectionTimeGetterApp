@@ -11,12 +11,20 @@ namespace InjectionTimeGetter
     internal class Program
     {
         /// <summary>
-        /// Args[0] is the path. Args[1] is the option for Ms1 or Ms2. 
+        /// Args[0] is the option for program to run. Args[1] is the parent . 
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            string[] files = Directory.GetFiles(args[0], "*.raw", SearchOption.AllDirectories);
+            int optionNumber = Convert.ToInt32(args[0]);
+
+            if(optionNumber == 3)
+            {
+                PeakOutputConverter.PeakOutputConverter_Main(args[1..]);
+                return; 
+            }
+
+            string[] files = Directory.GetFiles(args[1], "*.raw", SearchOption.AllDirectories);
             string[] fileNamesLite = files.Select(Path.GetFileNameWithoutExtension).ToArray(); 
             List<double[]> injectionTimes = new();
             List<IEnumerable<double>> injectionTimesBag = new(); 
