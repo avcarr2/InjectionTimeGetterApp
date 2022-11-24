@@ -179,7 +179,7 @@ namespace InjectionTimeGetter
             {
                 colNames.Add(col.ColumnName); 
             }
-            sb.AppendLine(string.Join("\t", colNames); 
+            sb.AppendLine(string.Join("\t", colNames)); 
 
             // write the rest of the data 
             foreach(DataRow rows in CompiledPeptidesInfo.Rows)
