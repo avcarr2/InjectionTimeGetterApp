@@ -24,13 +24,13 @@ namespace InjectionTimeGetter
                 return; 
             }
 
-            string[] files = Directory.GetFiles(args[1], "*.raw", SearchOption.AllDirectories);
-            string[] fileNamesLite = files.Select(Path.GetFileNameWithoutExtension).ToArray(); 
-            List<double[]> injectionTimes = new();
+            string[] files = Directory.GetFiles(args[2], "*.raw", SearchOption.AllDirectories);
+            string[] fileNamesLite = files.Select(Path.GetFileNameWithoutExtension).ToArray();
             List<IEnumerable<double>> injectionTimesBag = new(); 
             int msOrder = Convert.ToInt32(args[1]);
             
             int fileNumber = 1; 
+            Console.WriteLine("Beginning file processing.");
             Stopwatch sw = new Stopwatch();
             foreach (string file in files)
             {
@@ -43,8 +43,10 @@ namespace InjectionTimeGetter
                 Console.WriteLine("Processed file in {0} ms", sw.ElapsedMilliseconds);
                 fileNumber++; 
             }
+            Console.WriteLine("Generating injection times output...");
             string output = CreateOutput(injectionTimesBag.ToList(), fileNamesLite);
-            File.WriteAllText(Path.Combine(args[0], "InjectionTimes.txt"), output);
+            File.WriteAllText(Path.Combine(args[2], "InjectionTimes.txt"), output);
+            Console.WriteLine("Final output created. Press any button to close program.");
         }
 
         static string CreateOutput(List<IEnumerable<double>> dataList, string[] files)
@@ -81,7 +83,8 @@ namespace InjectionTimeGetter
             return ThermoRawFileReader.LoadAllStaticData(filePath,null,8)
                 .GetAllScansList();
         }
-        static void ProcessFile(List<MsDataScan> scansList, int msOrder, out IEnumerable<double> ms1Inj)
+        static void ProcessFile(List<MsDataScan> scansList, 
+            int msOrder, out IEnumerable<double> ms1Inj)
         {
             ms1Inj = GetInjectionTimesMs1(scansList, msOrder);
         }
