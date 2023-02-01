@@ -1,6 +1,6 @@
 # InjectionTimeGetterApp
 
-This console line application is used to get MS1 and MS2 injection times from Thermo .raw files. It uses mzLib to load and get injection times. The source code for mzLib can be found at https://github.com/smith-chem-wisc/mzLib. Other file formats can be supported in the future, if there is large enough interest. 
+This console line application is used to get MS1 and MS2 injection times from Thermo .raw files. It uses mzLib to load and get injection times. The source code for mzLib can be found at https://github.com/smith-chem-wisc/mzLib. This repository was built for a specific purpose in support of a specific paper. Support will be limited.   
 
 ## Requisites for running
 1) .NET 6.0 (https://dotnet.microsoft.com/en-us/download)
