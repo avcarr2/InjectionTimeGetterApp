@@ -23,30 +23,63 @@ namespace InjectionTimeGetter
                 PeakOutputConverter.PeakOutputConverter_Main(args[1..]);
                 return; 
             }
-
-            string[] files = Directory.GetFiles(args[2], "*.raw", SearchOption.AllDirectories);
-            string[] fileNamesLite = files.Select(Path.GetFileNameWithoutExtension).ToArray();
-            List<IEnumerable<double>> injectionTimesBag = new(); 
-            int msOrder = Convert.ToInt32(args[1]);
-            
-            int fileNumber = 1; 
-            Console.WriteLine("Beginning file processing.");
-            Stopwatch sw = new Stopwatch();
-            foreach (string file in files)
+            if(optionNumber == 2)
             {
-                Console.WriteLine("Processing file {0} of {1}", fileNumber, files.Length);
-                sw.Restart(); 
-                List<MsDataScan> scansList = LoadFile(file);
-                ProcessFile(scansList, msOrder, out IEnumerable<double> ms1Inj);
-                injectionTimesBag.Add(ms1Inj);
-                sw.Stop(); 
-                Console.WriteLine("Processed file in {0} ms", sw.ElapsedMilliseconds);
-                fileNumber++; 
+
+                string[] files = Directory.GetFiles(args[2], "*.raw", SearchOption.AllDirectories);
+                string[] fileNamesLite = files.Select(Path.GetFileNameWithoutExtension).ToArray();
+                List<IEnumerable<double>> injectionTimesBag = new();
+                int msOrder = Convert.ToInt32(args[1]);
+
+                int fileNumber = 1;
+                Console.WriteLine("Beginning file processing.");
+                Stopwatch sw = new Stopwatch();
+                foreach (string file in files)
+                {
+                    Console.WriteLine("Processing file {0} of {1}", fileNumber, files.Length);
+                    sw.Restart();
+                    List<MsDataScan> scansList = LoadFile(file);
+                    ProcessFile(scansList, msOrder, out IEnumerable<double> ms1Inj);
+                    injectionTimesBag.Add(ms1Inj);
+                    sw.Stop();
+                    Console.WriteLine("Processed file in {0} ms", sw.ElapsedMilliseconds);
+                    fileNumber++;
+                }
+                Console.WriteLine("Generating injection times output...");
+                string output = CreateOutput(injectionTimesBag.ToList(), fileNamesLite);
+                File.WriteAllText(Path.Combine(args[2], "InjectionTimes.txt"), output);
+                Console.WriteLine("Final output created. Press any button to close program.");
+                return; 
             }
-            Console.WriteLine("Generating injection times output...");
-            string output = CreateOutput(injectionTimesBag.ToList(), fileNamesLite);
-            File.WriteAllText(Path.Combine(args[2], "InjectionTimes.txt"), output);
-            Console.WriteLine("Final output created. Press any button to close program.");
+
+            if (optionNumber == 1)
+            {
+                string[] files = Directory.GetFiles(args[2], "*.raw", SearchOption.AllDirectories);
+                string[] fileNamesLite = files.Select(Path.GetFileNameWithoutExtension).ToArray();
+                List<IEnumerable<double>> ms1RtList = new();
+                int msOrder = Convert.ToInt32(args[1]);
+
+                int fileNumber = 1;
+                Console.WriteLine("Beginning file processing.");
+                Stopwatch sw = new Stopwatch();
+                foreach (string file in files)
+                {
+                    Console.WriteLine("Processing file {0} of {1}", fileNumber, files.Length);
+                    sw.Restart();
+                    List<MsDataScan> scansList = LoadFile(file);
+                    double[] ms1Rts = GetMs1Rt(scansList); 
+                    ms1RtList.Add(ms1Rts);
+                    sw.Stop();
+                    Console.WriteLine("Processed file in {0} ms", sw.ElapsedMilliseconds);
+                    fileNumber++;
+                }
+                Console.WriteLine("Generating ms1 retention times output...");
+                string output = CreateOutput(ms1RtList, fileNamesLite);
+                File.WriteAllText(Path.Combine(args[2], "Ms1Rts.txt"), output);
+                Console.WriteLine("Final output created. Press any button to close program.");
+                return;
+            }
+
         }
 
         static string CreateOutput(List<IEnumerable<double>> dataList, string[] files)

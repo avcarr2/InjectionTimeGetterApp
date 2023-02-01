@@ -2,7 +2,7 @@
   "profiles": {
     "InjectionTimeGetter": {
       "commandName": "Project",
-      "commandLineArgs": "\"0\" \"2\" \"C:\\Users\\austi\\Downloads\\0_Raw data\\finalmethods\""
+      "commandLineArgs": "\"1\" \"1\" \"C:\\Users\\austi\\Downloads\\0_Raw data\\finalmethods\""
     }
   }
 }
