@@ -14,7 +14,17 @@ This console line application is used to get MS1 and MS2 injection times from Th
 3) Build the application either for debug or release mode (Ctrl + Shift + B, or the first option in the Build dropdown menu).  
 4) Make note of the final location of the .exe file output by release, which will be found in InjectionTimeGetterApp\bin\Debug\net6.0\. 
 
+## Command Line Interface Options 
+Option 1: PROCESS SELECTOR: 
+  1) 1 : Gets retention times of all MS1 scans. 
+  2) 2 : Gets all injection times of either MS1 or MS2 scans. 
+  3) 3 : Combines Peaks output into a single file. This will not be supported in any issues. 
+Option 2: MS LEVEL 
+  For PROCESS SELECTOR 2, selects what Ms Level you want to extract injection times for. 
+Option 3: PATH TO FOLDER OF DATA
+  The input folder of data to process. 
+
 ## Running InjectionTimeGetterApp
 1) open command prompt. 
 2) type the following command 
-> start /b "" "{path to InjectionTimeGetterApp.exe}" "0" "{MS LEVEL}" "{PATH TO FOLDER OF DATA}"
+> start /b "" "{path to InjectionTimeGetterApp.exe}" "{PROCESS SELECTOR}" "{MS LEVEL}" "{PATH TO FOLDER OF DATA}"
